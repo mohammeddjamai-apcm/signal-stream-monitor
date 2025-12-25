@@ -70,7 +70,7 @@ const Index = () => {
         />
 
         {/* Plot Area */}
-        <main className="flex-1 p-4">
+        <main className="flex-1 p-4 min-h-0">
           <PlotArea mode={acquisitionMode} samplingRate={samplingRate} />
         </main>
       </div>
