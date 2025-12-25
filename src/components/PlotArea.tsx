@@ -22,64 +22,44 @@ export const PlotArea = ({ mode, samplingRate }: PlotAreaProps) => {
 
     const resizeCanvas = () => {
       const rect = canvas.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) return;
+      
       const dpr = window.devicePixelRatio || 1;
       canvas.width = rect.width * dpr;
       canvas.height = rect.height * dpr;
-      ctx.scale(dpr, dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
 
-    resizeCanvas();
-    window.addEventListener("resize", resizeCanvas);
-
     const drawGrid = (width: number, height: number) => {
-      const gridColor = getComputedStyle(document.documentElement)
-        .getPropertyValue("--chart-grid")
-        .trim();
-      
-      ctx.strokeStyle = `hsl(${gridColor})`;
+      ctx.strokeStyle = "rgba(100, 100, 100, 0.3)";
       ctx.lineWidth = 0.5;
 
-      // Vertical lines
-      const vSpacing = 50;
-      for (let x = 0; x <= width; x += vSpacing) {
+      for (let x = 0; x <= width; x += 50) {
         ctx.beginPath();
         ctx.moveTo(x, 0);
         ctx.lineTo(x, height);
         ctx.stroke();
       }
 
-      // Horizontal lines
-      const hSpacing = 50;
-      for (let y = 0; y <= height; y += hSpacing) {
+      for (let y = 0; y <= height; y += 50) {
         ctx.beginPath();
         ctx.moveTo(0, y);
         ctx.lineTo(width, y);
         ctx.stroke();
       }
 
-      // Center lines (brighter)
-      ctx.strokeStyle = `hsl(${gridColor.split(" ")[0]} ${gridColor.split(" ")[1]} 35%)`;
+      ctx.strokeStyle = "rgba(100, 100, 100, 0.6)";
       ctx.lineWidth = 1;
-      
       ctx.beginPath();
       ctx.moveTo(0, height / 2);
       ctx.lineTo(width, height / 2);
       ctx.stroke();
-
-      ctx.beginPath();
-      ctx.moveTo(width / 2, 0);
-      ctx.lineTo(width / 2, height);
-      ctx.stroke();
     };
 
     const drawOSC = (width: number, height: number, phase: number) => {
-      const primaryColor = getComputedStyle(document.documentElement)
-        .getPropertyValue("--primary")
-        .trim();
-
-      ctx.strokeStyle = `hsl(${primaryColor})`;
+      ctx.strokeStyle = "#22d3ee";
       ctx.lineWidth = 2;
-      ctx.shadowColor = `hsla(${primaryColor} / 0.5)`;
+      ctx.shadowColor = "rgba(34, 211, 238, 0.5)";
       ctx.shadowBlur = 8;
 
       ctx.beginPath();
@@ -100,33 +80,23 @@ export const PlotArea = ({ mode, samplingRate }: PlotAreaProps) => {
     };
 
     const drawFFT = (width: number, height: number, phase: number) => {
-      const primaryColor = getComputedStyle(document.documentElement)
-        .getPropertyValue("--primary")
-        .trim();
-      const accentColor = getComputedStyle(document.documentElement)
-        .getPropertyValue("--accent")
-        .trim();
-
       const barCount = 64;
       const barWidth = (width / barCount) * 0.7;
       const gap = (width / barCount) * 0.3;
 
       for (let i = 0; i < barCount; i++) {
         const x = i * (barWidth + gap) + gap / 2;
-        
-        // Generate pseudo-random but animated bar heights
         const baseHeight = Math.sin(i * 0.3 + phase) * 0.5 + 0.5;
         const variation = Math.sin(i * 0.7 + phase * 2) * 0.3;
         const barHeight = (baseHeight + variation) * height * 0.7;
 
         const gradient = ctx.createLinearGradient(x, height, x, height - barHeight);
-        gradient.addColorStop(0, `hsl(${primaryColor})`);
-        gradient.addColorStop(1, `hsl(${accentColor})`);
+        gradient.addColorStop(0, "#22d3ee");
+        gradient.addColorStop(1, "#8b5cf6");
 
         ctx.fillStyle = gradient;
-        ctx.shadowColor = `hsla(${primaryColor} / 0.4)`;
+        ctx.shadowColor = "rgba(34, 211, 238, 0.4)";
         ctx.shadowBlur = 6;
-        
         ctx.fillRect(x, height - barHeight, barWidth, barHeight);
       }
       ctx.shadowBlur = 0;
@@ -137,11 +107,13 @@ export const PlotArea = ({ mode, samplingRate }: PlotAreaProps) => {
       const width = rect.width;
       const height = rect.height;
 
+      if (width === 0 || height === 0) {
+        animationRef.current = requestAnimationFrame(animate);
+        return;
+      }
+
       // Clear canvas
-      const bgColor = getComputedStyle(document.documentElement)
-        .getPropertyValue("--card")
-        .trim();
-      ctx.fillStyle = `hsl(${bgColor})`;
+      ctx.fillStyle = "#1a1a2e";
       ctx.fillRect(0, 0, width, height);
 
       // Draw grid
@@ -160,20 +132,19 @@ export const PlotArea = ({ mode, samplingRate }: PlotAreaProps) => {
         phaseRef.current += 0.02;
       }
 
-      // Always animate - show test sine wave in idle mode
       animationRef.current = requestAnimationFrame(animate);
     };
 
-    // Initial draw
-    const rect = canvas.getBoundingClientRect();
-    ctx.fillStyle = `hsl(${getComputedStyle(document.documentElement).getPropertyValue("--card").trim()})`;
-    ctx.fillRect(0, 0, rect.width, rect.height);
-    drawGrid(rect.width, rect.height);
+    // Initial setup with delay to ensure DOM is ready
+    const initTimeout = setTimeout(() => {
+      resizeCanvas();
+      animate();
+    }, 100);
 
-    // Always start animation for testing
-    animate();
+    window.addEventListener("resize", resizeCanvas);
 
     return () => {
+      clearTimeout(initTimeout);
       window.removeEventListener("resize", resizeCanvas);
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
@@ -182,7 +153,7 @@ export const PlotArea = ({ mode, samplingRate }: PlotAreaProps) => {
   }, [mode, samplingRate]);
 
   return (
-    <div className="flex-1 flex flex-col bg-card rounded-lg border border-border overflow-hidden">
+    <div className="h-full flex flex-col bg-card rounded-lg border border-border overflow-hidden">
       {/* Plot Header */}
       <div className="flex items-center justify-between px-4 py-2 border-b border-border bg-secondary/30">
         <div className="flex items-center gap-4">
