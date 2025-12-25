@@ -154,11 +154,14 @@ export const PlotArea = ({ mode, samplingRate }: PlotAreaProps) => {
       } else if (mode === "fft") {
         drawFFT(width, height, phaseRef.current);
         phaseRef.current += 0.03;
+      } else {
+        // Test sine wave in idle mode
+        drawOSC(width, height, phaseRef.current);
+        phaseRef.current += 0.02;
       }
 
-      if (mode !== "idle") {
-        animationRef.current = requestAnimationFrame(animate);
-      }
+      // Always animate - show test sine wave in idle mode
+      animationRef.current = requestAnimationFrame(animate);
     };
 
     // Initial draw
@@ -167,9 +170,8 @@ export const PlotArea = ({ mode, samplingRate }: PlotAreaProps) => {
     ctx.fillRect(0, 0, rect.width, rect.height);
     drawGrid(rect.width, rect.height);
 
-    if (mode !== "idle") {
-      animate();
-    }
+    // Always start animation for testing
+    animate();
 
     return () => {
       window.removeEventListener("resize", resizeCanvas);
@@ -240,18 +242,11 @@ export const PlotArea = ({ mode, samplingRate }: PlotAreaProps) => {
         
         {/* Idle State Overlay */}
         {mode === "idle" && (
-          <div className="absolute inset-0 flex items-center justify-center bg-card/80 backdrop-blur-sm">
-            <div className="text-center space-y-2">
-              <div className="flex items-center justify-center gap-2 text-muted-foreground">
-                <Activity className="w-6 h-6" />
-                <span className="text-2xl">/</span>
-                <BarChart3 className="w-6 h-6" />
-              </div>
-              <p className="text-sm text-muted-foreground">
-                Select <span className="font-semibold">OSC</span> or{" "}
-                <span className="font-semibold">FFT</span> to start acquisition
-              </p>
-            </div>
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 bg-secondary/80 backdrop-blur-sm rounded-lg border border-border">
+            <p className="text-xs text-muted-foreground">
+              Test mode • Select <span className="font-semibold text-primary">OSC</span> or{" "}
+              <span className="font-semibold text-primary">FFT</span> to start acquisition
+            </p>
           </div>
         )}
       </div>
