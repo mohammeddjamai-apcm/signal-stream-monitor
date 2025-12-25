@@ -1,0 +1,624 @@
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --background: 220 20% 97%;
+    --foreground: 220 20% 10%;
+    --card: 220 20% 100%;
+    --card-foreground: 220 20% 10%;
+    --primary: 187 80% 42%;
+    --primary-foreground: 220 20% 98%;
+    --secondary: 220 15% 90%;
+    --secondary-foreground: 220 20% 20%;
+    --muted: 220 15% 92%;
+    --muted-foreground: 220 10% 45%;
+    --accent: 187 70% 45%;
+    --accent-foreground: 220 20% 98%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 142 72% 42%;
+    --success-foreground: 142 72% 98%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 38 92% 10%;
+    --border: 220 15% 85%;
+    --input: 220 15% 85%;
+    --ring: 187 80% 42%;
+    --chart-grid: 220 15% 88%;
+}
+
+body.dark {
+    --background: 220 25% 8%;
+    --foreground: 220 15% 92%;
+    --card: 220 22% 11%;
+    --card-foreground: 220 15% 92%;
+    --primary: 187 80% 50%;
+    --primary-foreground: 220 25% 8%;
+    --secondary: 220 18% 18%;
+    --secondary-foreground: 220 15% 85%;
+    --muted: 220 18% 15%;
+    --muted-foreground: 220 10% 55%;
+    --accent: 187 70% 50%;
+    --accent-foreground: 220 25% 8%;
+    --destructive: 0 72% 55%;
+    --success: 142 72% 48%;
+    --warning: 38 92% 55%;
+    --border: 220 18% 20%;
+    --input: 220 18% 20%;
+    --ring: 187 80% 50%;
+    --chart-grid: 220 18% 18%;
+}
+
+body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Top Bar */
+.top-bar {
+    height: 56px;
+    border-bottom: 1px solid hsl(var(--border));
+    background-color: hsl(var(--card));
+    padding: 0 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.top-bar-left {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.logo-icon {
+    color: hsl(var(--primary));
+}
+
+.logo-text {
+    font-weight: 600;
+    font-size: 1.125rem;
+    letter-spacing: -0.025em;
+}
+
+.logo-accent {
+    color: hsl(var(--primary));
+}
+
+.divider {
+    width: 1px;
+    height: 24px;
+    background-color: hsl(var(--border));
+}
+
+.status-led {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.led {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: hsl(var(--destructive));
+    transition: all 0.3s ease;
+}
+
+.led.connecting {
+    background-color: hsl(var(--warning));
+    animation: led-blink 1s ease-in-out infinite;
+}
+
+.led.connected {
+    background-color: hsl(var(--success));
+    animation: led-pulse 2s ease-in-out infinite;
+}
+
+.status-text {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: hsl(var(--muted-foreground));
+}
+
+.datetime-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.date {
+    font-size: 0.75rem;
+    color: hsl(var(--muted-foreground));
+}
+
+.time {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: hsl(var(--foreground));
+    letter-spacing: 0.05em;
+}
+
+.theme-toggle {
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    border-radius: 0.375rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: hsl(var(--foreground));
+    transition: background-color 0.2s;
+}
+
+.theme-toggle:hover {
+    background-color: hsl(var(--secondary));
+}
+
+body:not(.dark) .moon-icon {
+    display: none;
+}
+
+body.dark .sun-icon {
+    display: none;
+}
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+}
+
+/* Control Panel */
+.control-panel {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background-color: hsl(var(--card));
+    border-right: 1px solid hsl(var(--border));
+    width: 288px;
+    transition: all 0.3s ease-in-out;
+}
+
+.control-panel.collapsed {
+    width: 48px;
+}
+
+.collapse-toggle {
+    position: absolute;
+    right: -12px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    width: 24px;
+    height: 48px;
+    background-color: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    border-radius: 0 0.375rem 0.375rem 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.collapse-toggle:hover {
+    background-color: hsl(var(--secondary));
+}
+
+.control-panel:not(.collapsed) .chevron-right {
+    display: none;
+}
+
+.control-panel.collapsed .chevron-left {
+    display: none;
+}
+
+.chevron-left,
+.chevron-right {
+    color: hsl(var(--muted-foreground));
+}
+
+.panel-content {
+    flex: 1;
+    overflow: hidden;
+    transition: opacity 0.2s;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.control-panel.collapsed .panel-content {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.panel-header {
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid hsl(var(--border));
+}
+
+.panel-header h2 {
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: hsl(var(--foreground));
+}
+
+.sampling-rate-section {
+    background-color: hsl(var(--secondary) / 0.5);
+    border-radius: 0.5rem;
+    padding: 1rem;
+}
+
+.slider-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.slider-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.slider-header label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: hsl(var(--foreground));
+}
+
+.rate-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: hsl(var(--primary));
+}
+
+input[type="range"] {
+    width: 100%;
+    height: 8px;
+    background: hsl(var(--secondary));
+    border-radius: 1rem;
+    outline: none;
+    appearance: none;
+    cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    background: hsl(var(--primary));
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    background: hsl(var(--primary));
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+input[type="range"]::-moz-range-thumb:hover {
+    transform: scale(1.1);
+}
+
+.slider-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    font-family: 'JetBrains Mono', monospace;
+    color: hsl(var(--muted-foreground));
+}
+
+.mode-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.mode-section h3 {
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: hsl(var(--muted-foreground));
+}
+
+.mode-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+}
+
+.mode-btn {
+    height: 48px;
+    border: none;
+    background-color: hsl(var(--secondary));
+    color: hsl(var(--foreground));
+    border-radius: 0.375rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.2s;
+}
+
+.mode-btn:hover:not(:disabled) {
+    background-color: hsl(var(--secondary) / 0.8);
+}
+
+.mode-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.mode-btn.active {
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+}
+
+.stop-btn {
+    width: 100%;
+    height: 56px;
+    border: none;
+    background-color: hsl(var(--destructive));
+    color: hsl(var(--destructive-foreground));
+    border-radius: 0.375rem;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.2s;
+}
+
+.stop-btn:hover:not(:disabled) {
+    background-color: hsl(var(--destructive) / 0.9);
+}
+
+.stop-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.status-info {
+    background-color: hsl(var(--secondary) / 0.3);
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.status-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.875rem;
+}
+
+.status-row span:first-child {
+    color: hsl(var(--muted-foreground));
+}
+
+.status-mode {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+    color: hsl(var(--foreground));
+    text-transform: uppercase;
+}
+
+.status-state {
+    font-weight: 500;
+    color: hsl(var(--muted-foreground));
+}
+
+.status-state.running {
+    color: hsl(var(--success));
+}
+
+.collapsed-icons {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem 0;
+    gap: 1rem;
+    color: hsl(var(--muted-foreground));
+}
+
+.control-panel.collapsed .collapsed-icons {
+    display: flex;
+}
+
+/* Plot Area */
+.plot-container {
+    flex: 1;
+    padding: 1rem;
+    overflow: hidden;
+}
+
+.plot-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.plot-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid hsl(var(--border));
+    background-color: hsl(var(--secondary) / 0.3);
+}
+
+.plot-modes {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.plot-mode {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: hsl(var(--muted-foreground));
+    transition: color 0.2s;
+}
+
+.plot-mode.active {
+    color: hsl(var(--primary));
+}
+
+.plot-mode svg {
+    width: 16px;
+    height: 16px;
+}
+
+.separator {
+    color: hsl(var(--muted-foreground));
+}
+
+.plot-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.75rem;
+    font-family: 'JetBrains Mono', monospace;
+    color: hsl(var(--muted-foreground));
+}
+
+.plot-info strong {
+    color: hsl(var(--foreground));
+    font-weight: 600;
+}
+
+.canvas-container {
+    flex: 1;
+    position: relative;
+}
+
+#plotCanvas {
+    width: 100%;
+    height: 100%;
+}
+
+.idle-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: hsl(var(--card) / 0.8);
+    backdrop-filter: blur(4px);
+}
+
+.idle-overlay.hidden {
+    display: none;
+}
+
+.idle-content {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.idle-icons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    color: hsl(var(--muted-foreground));
+}
+
+.idle-icons svg {
+    width: 24px;
+    height: 24px;
+}
+
+.idle-separator {
+    font-size: 1.5rem;
+}
+
+.idle-content p {
+    font-size: 0.875rem;
+    color: hsl(var(--muted-foreground));
+}
+
+.idle-content strong {
+    font-weight: 600;
+}
+
+.plot-footer {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.25rem 1rem;
+    border-top: 1px solid hsl(var(--border));
+    background-color: hsl(var(--secondary) / 0.3);
+    font-size: 0.75rem;
+    font-family: 'JetBrains Mono', monospace;
+    color: hsl(var(--muted-foreground));
+}
+
+/* Animations */
+@keyframes led-blink {
+    0%, 50% {
+        opacity: 1;
+        box-shadow: 0 0 8px 2px currentColor;
+    }
+    51%, 100% {
+        opacity: 0.3;
+        box-shadow: none;
+    }
+}
+
+@keyframes led-pulse {
+    0%, 100% {
+        box-shadow: 0 0 6px 1px currentColor;
+    }
+    50% {
+        box-shadow: 0 0 12px 3px currentColor;
+    }
+}
