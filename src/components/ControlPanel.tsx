@@ -105,7 +105,7 @@ export const ControlPanel = ({
             variant="destructive"
             className="w-full h-14 font-semibold text-base"
           >
-            <Square className="w-5 h-5 mr-2" />
+            <Square className="w-5 h-5 mr-2" fill="currentColor" />
             STOP
           </Button>
 
