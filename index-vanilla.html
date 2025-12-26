@@ -192,6 +192,26 @@
         </main>
     </div>
 
+    <!-- Debug Panel -->
+    <div class="debug-panel" id="debugPanel">
+        <div class="debug-header">
+            <span>Debug Console</span>
+            <button class="debug-toggle" id="debugToggle">−</button>
+        </div>
+        <div class="debug-content" id="debugContent">
+            <div class="debug-stats">
+                <span>FPS: <strong id="debugFps">0</strong></span>
+                <span>Mode: <strong id="debugMode">idle</strong></span>
+                <span>WS: <strong id="debugWs">disconnected</strong></span>
+            </div>
+            <div class="debug-log" id="debugLog"></div>
+            <div class="debug-actions">
+                <button id="debugClear">Clear Log</button>
+                <button id="debugToggleLogs">Toggle Logs</button>
+            </div>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
